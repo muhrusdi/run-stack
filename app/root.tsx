@@ -8,14 +8,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import globalStyles from "~/styles/globals.css";
+import { RootLayout } from "./layouts/root-layout";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  { rel: "stylesheet", href: globalStyles },
 ];
 
 export default function App() {
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +26,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <RootLayout>
+          <Outlet />
+        </RootLayout>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
