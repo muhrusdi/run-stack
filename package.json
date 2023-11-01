@@ -12,11 +12,11 @@
   "dependencies": {
     "@conform-to/react": "^0.9.0",
     "@conform-to/zod": "^0.9.0",
-    "@remix-run/css-bundle": "^2.1.0",
-    "@remix-run/node": "^2.1.0",
-    "@remix-run/react": "^2.1.0",
-    "@remix-run/serve": "^2.1.0",
-    "@tremor/react": "^3.10.0",
+    "@remix-run/css-bundle": "^2.2.0",
+    "@remix-run/node": "^2.2.0",
+    "@remix-run/react": "^2.2.0",
+    "@remix-run/serve": "^2.2.0",
+    "@tremor/react": "^3.10.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -24,8 +24,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.1.0",
-    "@remix-run/eslint-config": "^2.1.0",
+    "@remix-run/dev": "^2.2.0",
+    "@remix-run/eslint-config": "^2.2.0",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
     "eslint": "^8.52.0",
