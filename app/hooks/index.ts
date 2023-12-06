@@ -1,1 +1,2 @@
-export { default as useParams } from "./use-params";
+export { default as useFilter } from "./use-filter";
+export { default as useLoading } from "./use-loading";
