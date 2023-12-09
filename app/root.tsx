@@ -10,13 +10,17 @@ import {
 } from "@remix-run/react";
 import globalStyles from "~/styles/globals.css";
 import { RootLayout } from "./layouts/root-layout";
+import rdtStylesheet from "remix-development-tools/index.css";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: globalStyles },
+  ...(process.env.NODE_ENV === "development"
+    ? [{ rel: "stylesheet", href: rdtStylesheet }]
+    : []),
 ];
 
-export default function App() {
+const App = () => {
   return (
     <html lang="en" className="light">
       <head>
@@ -35,4 +39,13 @@ export default function App() {
       </body>
     </html>
   );
+};
+
+let Apps = App;
+
+if (process.env.NODE_ENV === "development") {
+  const { withDevTools } = await import("remix-development-tools");
+  Apps = withDevTools(Apps);
 }
+
+export default Apps;
