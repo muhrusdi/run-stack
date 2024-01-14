@@ -20,7 +20,7 @@ export const links: LinksFunction = () => [
     : []),
 ];
 
-const App = () => {
+const Root = () => {
   return (
     <html lang="en" className="light">
       <head>
@@ -41,11 +41,11 @@ const App = () => {
   );
 };
 
-let Apps = App;
+let App = Root;
 
 if (process.env.NODE_ENV === "development") {
   const { withDevTools } = await import("remix-development-tools");
-  Apps = withDevTools(Apps);
+  App = withDevTools(App);
 }
 
-export default Apps;
+export default App;
