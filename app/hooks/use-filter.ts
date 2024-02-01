@@ -1,3 +1,4 @@
+import type { SubmitOptions } from "@remix-run/react";
 import { useSearchParams, useSubmit } from "@remix-run/react";
 
 const useFilter = () => {
@@ -6,8 +7,8 @@ const useFilter = () => {
 
   const filter = Object.fromEntries(searchParams.entries());
 
-  const setParams = (vals: Record<string, string>) => {
-    submit({ ...filter, ...vals });
+  const setParams = (vals: Record<string, string>, options?: SubmitOptions) => {
+    submit({ ...filter, ...vals }, options);
   };
 
   const removeFilter = (key: string) => {

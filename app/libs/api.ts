@@ -1,4 +1,4 @@
-import { generateParams, generateQueries } from "~/utils";
+import { generateParams, generateQueries, wait } from "~/utils";
 import { APIs } from "~/utils/endpoints";
 
 const BASE_URL = process.env.API_BASE_URL;
@@ -8,6 +8,7 @@ type Options = {
   query?: Record<string, any>;
   options?: RequestInit;
   body?: FormData | string;
+  sleep?: number;
 };
 
 export const query = (path: string, options?: RequestInit) =>
@@ -21,7 +22,7 @@ export type PathsKeyType = {
 
 export const getData = async <TData>(
   path: keyof PathsKeyType,
-  options?: Pick<Options, "options" | "params" | "query">
+  options?: Pick<Options, "options" | "params" | "query" | "sleep">
 ) => {
   const paramsString = generateParams(options?.params);
   const queriesString = generateQueries(options?.query);
@@ -35,6 +36,10 @@ export const getData = async <TData>(
 
   if (!res.ok) {
     throw new Error("Failed to fetch data on the " + BASE_URL + APIs[path]);
+  }
+
+  if (options?.sleep) {
+    await wait(options.sleep);
   }
 
   return res.json() as TData;

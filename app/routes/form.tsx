@@ -1,6 +1,6 @@
 import { useForm } from "@conform-to/react";
-import { parse } from "@conform-to/zod";
-import { json, type ActionFunctionArgs } from "@remix-run/node";
+import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { type ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { TextInput } from "@tremor/react";
 import { z } from "zod";
@@ -15,41 +15,41 @@ const schema = z.object({
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
-  const submission = parse(formData, { schema });
+  const submission = parseWithZod(formData, { schema });
 
   console.log(submission);
 
-  return json(submission);
+  if (submission.status !== "success") {
+    return submission.reply();
+  }
+
+  return redirect("/form");
 }
 
 const TestForm = () => {
-  const lastSubmission = useActionData<typeof action>();
+  const lastResult = useActionData<typeof action>();
 
   const [form, fields] = useForm({
-    lastSubmission,
-
+    lastResult,
     shouldValidate: "onBlur",
+    constraint: getZodConstraint(schema),
   });
 
   return (
     <div>
-      <Form method="post" {...form.props}>
+      <Form method="post" id={form.id} onSubmit={form.onSubmit}>
         <div>
           <label>Email</label>
           <TextInput
             type="email"
             error={Boolean(fields.email.errors?.length)}
-            name="email"
-            defaultValue={fields.email.defaultValue}
+            name={fields.email.name}
           />
           <div>{JSON.stringify(fields.email.errors)}</div>
         </div>
         <div>
           <label>Message</label>
-          <TextInput
-            name="message"
-            defaultValue={fields.message.defaultValue}
-          />
+          <TextInput name={fields.message.name} />
           <div>{fields.message.errors}</div>
         </div>
         <button>Send</button>

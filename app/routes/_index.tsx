@@ -1,9 +1,20 @@
-import { defer } from "@remix-run/node";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Await, Link, useLoaderData } from "@remix-run/react";
+import { defer, redirect } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
+import {
+  Await,
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import type { DeltaType } from "@tremor/react";
 import { Card, Metric, Text, Flex, BadgeDelta, Grid } from "@tremor/react";
 import { Suspense } from "react";
+import { userPrefs } from "~/cookies.server";
 import { useLoading, useFilter } from "~/hooks";
 import { getData } from "~/libs/api";
 import type { MovieType } from "~/types";
@@ -17,20 +28,47 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie = (await userPrefs.parse(cookieHeader)) || {};
+  console.log("--server", cookie);
   const sort_by = url.searchParams.get("sort_by");
+  const page = url.searchParams.get("page");
   const data = getData("/discover/movie", {
     query: { sort_by },
+    sleep: 4000,
+  });
+
+  const dataTv = getData("/discover/tv", {
+    query: { page },
+    sleep: 2000,
   });
   // await wait(4000);
-  return defer({ data });
+  return defer({ data, dataTv });
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  console.log(formData.get("page"));
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": await userPrefs.serialize({ page: formData.get("page") }),
+    },
+  });
 };
 
 export default function Index() {
   const { setParams, filter, removeFilter } = useFilter();
-  const { isLoading } = useLoading();
-  const { data } = useLoaderData<typeof loader>() as {
+  const { isLoading, loadingState } = useLoading();
+  const { data, dataTv } = useLoaderData<typeof loader>() as {
     data: Promise<{ results: MovieType[] }>;
+    dataTv: Promise<{ results: MovieType[] }>;
+    page: string;
   };
+
+  const [params] = useSearchParams();
+
+  const fetcher = useFetcher();
 
   const categories: {
     title: string;
@@ -116,10 +154,16 @@ export default function Index() {
                       onClick={() =>
                         filter[childItem.key] === childItem.value
                           ? removeFilter(childItem.key)
-                          : setParams({ [childItem.key]: childItem.value })
+                          : setParams(
+                              { [childItem.key]: childItem.value },
+                              {
+                                state: { [childItem.key]: childItem.value },
+                              }
+                            )
                       }
                     >
-                      {isLoading && item.key === childItem.key
+                      {isLoading &&
+                      loadingState?.[childItem.key] === childItem.value
                         ? "Loading..."
                         : childItem.label}
                     </button>
@@ -129,6 +173,16 @@ export default function Index() {
             </div>
           ))}
         </div>
+      </div>
+      <div>
+        <fetcher.Form method="post">
+          <button name="page" value={1}>
+            Page 1
+          </button>
+          <button name="page" value={2}>
+            Page 2
+          </button>
+        </fetcher.Form>
       </div>
       {isLoading ? (
         <div className="font-bold text-violet-700">Loading...</div>
@@ -151,18 +205,39 @@ export default function Index() {
           </Card>
         ))}
       </Grid>
-      <div>
+      <div className="flex space-x-3">
         <Suspense fallback="Loading...">
           <Await resolve={data}>
-            {(list) => (
-              <ul>
-                {list.results.map((item) => (
-                  <div key={item.id}>
-                    <Link to={`/movie/${item.id}`}>{item.title}</Link>
-                  </div>
-                ))}
-              </ul>
-            )}
+            {(list) =>
+              isLoading && loadingState?.sort_by ? (
+                "Loading..."
+              ) : (
+                <ul className="w-1/2">
+                  {list.results.map((item) => (
+                    <li key={item.id}>
+                      <Link to={`/movie/${item.id}`}>{item.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          </Await>
+        </Suspense>
+        <Suspense fallback="Loading..." key={params.get("page")}>
+          <Await resolve={dataTv}>
+            {(listTv) =>
+              isLoading && loadingState?.page ? (
+                "Loading..."
+              ) : (
+                <ul className="w-1/2">
+                  {listTv.results.map((item) => (
+                    <li key={item.id}>
+                      <Link to={`/movie/${item.id}`}>{item.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
           </Await>
         </Suspense>
       </div>
