@@ -10,13 +10,13 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@conform-to/react": "^0.9.1",
-    "@conform-to/zod": "^0.9.1",
+    "@conform-to/react": "^1.0.0",
+    "@conform-to/zod": "^1.0.0",
     "@remix-run/css-bundle": "^2.5.1",
     "@remix-run/node": "^2.5.1",
     "@remix-run/react": "^2.5.1",
     "@remix-run/serve": "^2.5.1",
-    "@tremor/react": "^3.13.1",
+    "@tremor/react": "^3.13.4",
     "isbot": "^4.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -26,10 +26,10 @@
   "devDependencies": {
     "@remix-run/dev": "^2.5.1",
     "@remix-run/eslint-config": "^2.5.1",
-    "@types/react": "^18.2.48",
+    "@types/react": "^18.2.49",
     "@types/react-dom": "^18.2.18",
     "eslint": "^8.56.0",
-    "remix-development-tools": "^3.7.2",
+    "remix-development-tools": "^3.7.4",
     "typescript": "^5.3.3"
   },
   "engines": {
