@@ -17,7 +17,9 @@ export const links: LinksFunction = () => [
     : []),
 ];
 
-const Root = () => {
+export const Layout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <html lang="en" className="light">
       <head>
@@ -27,14 +29,16 @@ const Root = () => {
         <Links />
       </head>
       <body>
-        <RootLayout>
-          <Outlet />
-        </RootLayout>
+        <RootLayout>{children}</RootLayout>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
+};
+
+const Root = () => {
+  return <Outlet />;
 };
 
 let App = Root;
