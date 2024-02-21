@@ -34,9 +34,9 @@ export const getData = async <TData>(
     },
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch data on the " + BASE_URL + APIs[path]);
-  }
+  // if (!res.ok) {
+  //   throw new Error("Failed to fetch data on the " + BASE_URL + APIs[path]);
+  // }
 
   if (options?.sleep) {
     await wait(options.sleep);

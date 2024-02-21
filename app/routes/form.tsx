@@ -17,8 +17,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const submission = parseWithZod(formData, { schema });
 
-  console.log(submission);
-
   if (submission.status !== "success") {
     return submission.reply();
   }

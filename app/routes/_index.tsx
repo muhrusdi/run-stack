@@ -28,9 +28,6 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await userPrefs.parse(cookieHeader)) || {};
-  console.log("--server", cookie);
   const sort_by = url.searchParams.get("sort_by");
   const page = url.searchParams.get("page");
   const data = getData("/discover/movie", {
@@ -213,7 +210,7 @@ export default function Index() {
                 "Loading..."
               ) : (
                 <ul className="w-1/2">
-                  {list.results.map((item) => (
+                  {list?.results?.map((item) => (
                     <li key={item.id}>
                       <Link to={`/movie/${item.id}`}>{item.title}</Link>
                     </li>
@@ -230,7 +227,7 @@ export default function Index() {
                 "Loading..."
               ) : (
                 <ul className="w-1/2">
-                  {listTv.results.map((item) => (
+                  {listTv?.results?.map((item) => (
                     <li key={item.id}>
                       <Link to={`/movie/${item.id}`}>{item.name}</Link>
                     </li>

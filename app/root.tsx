@@ -1,19 +1,16 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import globalStyles from "~/styles/globals.css";
+import globalStyles from "~/styles/globals.css?url";
 import { RootLayout } from "./layouts/root-layout";
-import rdtStylesheet from "remix-development-tools/index.css";
+import rdtStylesheet from "remix-development-tools/index.css?url";
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: globalStyles },
   ...(process.env.NODE_ENV === "development"
     ? [{ rel: "stylesheet", href: rdtStylesheet }]
@@ -35,7 +32,6 @@ const Root = () => {
         </RootLayout>
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );
